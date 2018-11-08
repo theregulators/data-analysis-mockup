@@ -30,7 +30,7 @@ function VectorRGB(r, g, b) {
     return new VectorRGB(r*k, g*k, b*k);
   }
   this.projOn = function(vr2) {
-    return this.timesScalar(this.dot(vr2) / Math.pow(vr2.norm(), 2));
+    return vr2.timesScalar(this.dot(vr2) / Math.pow(vr2.norm(), 2));
   }
   this.ortProjOn = function(vr2) {
     return this.subtract(this.projOn(vr2));
@@ -46,35 +46,6 @@ let ctx = canvas.getContext('2d');
 let width = canvas.width;
 let height = canvas.height;
 
-// main script
-/*let p0, p1, p, p0p1, pp0, o, q, p0q, z, bgl;
-p0 = new VectorRGB(r0, g0, b0);
-p1 = new VectorRGB(r1, g1, b1);
-p = new VectorRGB(r, g, b);
-
-p0p1 = p1.subtract(p0);
-pp0 = p0.subtract(p);
-
-o = pp0.ortProjOn(p0p1);
-q = p.add(o);
-p0q = q.subtract(p0);
-
-console.log(o.toString());
-
-z = p0q.norm() / p0p1.norm();
-bgl = f(z);
-// end main script
-
-let dc = p0p1.timesScalar(1/(width-1));
-let current_color = p0;
-for(let i = 0; i < width; i++, current_color = current_color.add(dc)) {
-  ctx.fillStyle = `rgb(${current_color.r}, ${current_color.g}, ${current_color.b})`;
-  ctx.fillRect(i, 0, 1, 100);
-}
-
-ctx.fillStyle = `rgb(${p.r}, ${p.g}, ${p.b})`;
-ctx.fillRect((width * z)-50, 100, 100, 100);*/
-
 let minColorElem = document.querySelector('#minColor');
 let minValueElem = document.querySelector('#minValue');
 let maxColorElem = document.querySelector('#maxColor');
@@ -88,17 +59,14 @@ let calculate = _ => {
   p = getVectorRGB(colorElem.value);
 
   p0p1 = p1.subtract(p0);
-  pp0 = p0.subtract(p);
+  p0p = p.subtract(p0);
 
-  o = pp0.ortProjOn(p0p1);
+  o = p0p.ortProjOn(p0p1);
   q = p.add(o);
   p0q = q.subtract(p0);
 
-  console.log(o.toString());
-
   z = p0q.norm() / p0p1.norm();
   bgl = f(z);
-  // end main script
 
   ctx.clearRect(0, 0, width, height);
   let dc = p0p1.timesScalar(1/(width-1));
@@ -110,6 +78,9 @@ let calculate = _ => {
 
   ctx.fillStyle = `rgb(${p.r}, ${p.g}, ${p.b})`;
   ctx.fillRect((width * z)-50, 100, 100, 100);
+
+  console.log("v: " + p0p.toString());
+  console.log(z);
 };
 calculate();
 [minColorElem, minValueElem, maxColorElem, maxValueElem, colorElem].forEach(elem => {
